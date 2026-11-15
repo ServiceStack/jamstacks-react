@@ -169,6 +169,20 @@ Add future reusable components under `src/components/` and export their public p
 
 ## Release
 
-Update the version, run the checks above, and inspect `npm pack --dry-run`. Publish to npm only when requested, using `npm publish` with the intended account. Commit the reproducible lockfile; `dist/`, browser reports, dependencies and package archives are generated files.
+Publishing runs in `.github/workflows/npm-publish.yml` when a GitHub release is published, matching the ServiceStack React release flow. It checks both React versions, verifies the release tag matches the package version, builds the package and publishes to npm with provenance. Ordinary pushes and pull requests only validate; drafts and prereleases do not publish an npm version.
+
+With a clean working tree on `main`:
+
+```sh
+npm run bump          # patch: update package + lockfile, commit, tag, and push
+# Or: npm run bump:minor / npm run bump:major
+npm run release       # create the GitHub release; its Action publishes to npm
+```
+
+`npm run release -- --dry-run` prints the release commands without creating or pushing tags or releases. The release command requires GitHub CLI authentication and refuses uncommitted, unpushed or mismatched-tag code. For the initial `0.1.0` release, it creates the missing version tag automatically; no bump is needed.
+
+Configure npm trusted publishing for package `jamstacks`: GitHub organization `ServiceStack`, repository `jamstacks-react`, workflow filename `npm-publish.yml`, and permission to publish directly. No npm token is stored in the workflow. npm requires the package to exist before adding a trusted publisher; first-package registration must be completed once before running this Action. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
+
+Commit the reproducible lockfile. `dist/`, browser reports, dependencies and package archives are generated files.
 
 BSD-3-Clause. See [LICENSE](LICENSE).

@@ -24,6 +24,10 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.demo.json",
     "test": "npm run build && node --test tests/package.test.mjs && playwright test",
     "test:browser": "playwright test",
+    "bump": "npm version patch && git push origin main --follow-tags",
+    "bump:minor": "npm version minor && git push origin main --follow-tags",
+    "bump:major": "npm version major && git push origin main --follow-tags",
+    "release": "node scripts/release.mjs",
     "prepare": "npm run build",
     "prepack": "npm run build"
   },

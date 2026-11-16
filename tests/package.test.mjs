@@ -8,9 +8,9 @@ import { ThemeScript, getThemeScript } from 'jamstacks/server';
 
 test('public exports render on the server without browser globals', () => {
   const html = renderToString(createElement(ThemeProvider, null, createElement(DarkModeToggle)));
-  assert.match(html, /role="switch"/);
-  assert.match(html, /aria-label="Dark mode"/);
-  assert.match(html, /aria-checked="false"/);
+  assert.doesNotMatch(html, /role=/);
+  assert.match(html, /aria-label="Theme: System"/);
+  assert.match(html, /data-theme-preference="system"/);
   assert.match(html, /disabled=""/);
   assert.match(renderToString(createElement(ThemeScript, { nonce: 'example-nonce' })), /nonce="example-nonce"/);
 });

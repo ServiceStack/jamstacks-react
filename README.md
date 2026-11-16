@@ -1,6 +1,6 @@
 # jamstacks
 
-Shared React components for Jamstacks templates. The initial library provides a dark-mode switch and a shared theme API. It works with React 18.2+ and React 19, including Next.js App Router and static exports, with no Next.js or Tailwind runtime dependency.
+Shared React components for Jamstacks templates. The initial library provides a light/dark/system theme toggle and a shared theme API. It works with React 18.2+ and React 19, including Next.js App Router and static exports, with no Next.js or Tailwind runtime dependency.
 
 ## Install in a template
 
@@ -44,7 +44,7 @@ export default function App() {
 }
 ```
 
-Use one provider per document and place all switches inside it. Multiple switches share the same state. `DarkModeToggle` is a native keyboard-accessible button with `role="switch"`, a default accessible name of "Dark mode", and a live `aria-checked` value. It supports a forwarded button ref and ordinary button props, including `className`, `style`, `disabled`, `aria-label`, and `onClick`. Calling `event.preventDefault()` in `onClick` cancels the theme change. It stays disabled until hydration finishes so a click cannot overwrite a saved preference before it has loaded.
+Use one provider per document and place all toggles inside it. Multiple toggles share the same state. `DarkModeToggle` is a single native keyboard-accessible button that cycles between three preferences, showing a sun, moon or monitor icon for the current one. From System, a click switches to the opposite of the device's appearance, then to the device's appearance, then back to System, so the first click always changes what the visitor sees. Its accessible name and tooltip include the current preference ("Theme: System" by default; `aria-label` replaces the "Theme" prefix), and `data-theme-preference="light|dark|system"` exposes it to template selectors. It supports a forwarded button ref and ordinary button props, including `className`, `style`, `disabled`, `aria-label`, and `onClick`. Calling `event.preventDefault()` in `onClick` cancels the theme change. It stays disabled until hydration finishes so a click cannot overwrite a saved preference before it has loaded.
 
 ## Next.js App Router
 
@@ -72,7 +72,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 import { DarkModeToggle } from 'jamstacks';
 
 export default function Header() {
-  return <header><DarkModeToggle aria-label="Dark mode" /></header>;
+  return <header><DarkModeToggle aria-label="Theme" /></header>;
 }
 ```
 
@@ -108,7 +108,7 @@ An existing template that uses only `@media (prefers-color-scheme: dark)` needs 
 body { background: var(--page-background); color: var(--page-ink); }
 ```
 
-Apply the same pattern to all of the template's dark palette variables, including inherited `--jamstacks-*` component fallbacks. With Tailwind, configure its dark variant to use the `.dark` class rather than a media query. The toggle carries its own inline styles and needs no stylesheet import or global CSS rules. Its colours can be customized through `--jamstacks-toggle-background`, `--jamstacks-toggle-dark-background`, `--jamstacks-toggle-border`, `--jamstacks-toggle-color`, `--jamstacks-toggle-dark-color`, and `--jamstacks-toggle-thumb`. The `style` prop overrides the button's defaults; `className` remains available for template selectors. It preserves the browser's native keyboard-focus outline. Theme changes are instantaneous, with no animation that needs reduced-motion handling.
+Apply the same pattern to all of the template's dark palette variables, including inherited `--jamstacks-*` component fallbacks. With Tailwind, configure its dark variant to use the `.dark` class rather than a media query. The toggle carries its own inline styles and needs no stylesheet import or global CSS rules. Its colours can be customized through `--jamstacks-toggle-background`, `--jamstacks-toggle-dark-background`, `--jamstacks-toggle-border`, `--jamstacks-toggle-color`, and `--jamstacks-toggle-dark-color`. The `style` prop overrides the button's defaults; `className` remains available for template selectors. It preserves the browser's native keyboard-focus outline. Theme changes are instantaneous, with no animation that needs reduced-motion handling.
 
 ## Theme API
 

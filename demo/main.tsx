@@ -8,7 +8,6 @@ const accentTokens = {
   '--jamstacks-toggle-background': '#e9ddff',
   '--jamstacks-toggle-dark-background': '#7152a3',
   '--jamstacks-toggle-color': '#51347a',
-  '--jamstacks-toggle-thumb': '#fdfaff',
 } as CSSProperties;
 
 function Playground() {
@@ -34,8 +33,8 @@ function Playground() {
       <main>
         <div className="demo-intro">
           <p className="demo-eyebrow">React component library</p>
-          <h1>A little switch.<br />A shared preference.</h1>
-          <p>Try the dark-mode toggle, inspect the current theme, and see every instance stay in sync.</p>
+          <h1>A little toggle.<br />A shared preference.</h1>
+          <p>Try the theme toggle, inspect the current theme, and see every instance stay in sync.</p>
         </div>
 
         <div className="demo-grid">
@@ -43,8 +42,8 @@ function Playground() {
             <p className="demo-eyebrow">01 / Appearance</p>
             <h2 id="appearance-heading">Choose your theme</h2>
             <div className="demo-switch-row">
-              <div><strong>Dark mode</strong><p>The switch makes an explicit light or dark choice.</p></div>
-              <DarkModeToggle ref={toggle} aria-label="Main dark mode switch" />
+              <div><strong>Theme</strong><p>One button cycles System, the opposite of your device, then your device’s mode.</p></div>
+              <DarkModeToggle ref={toggle} aria-label="Main theme" />
             </div>
             <div className="demo-preferences" role="group" aria-label="Theme preference">
               {(['light', 'dark', 'system'] as Theme[]).map(value => (
@@ -89,12 +88,12 @@ function Playground() {
               <li>Choose a mode and reload. Your choice should remain.</li>
               <li>Open a second tab. Switching in either tab should update the other.</li>
               <li>Choose System, then change the device’s appearance.</li>
-              <li>Use Tab to focus a switch, then Space or Enter to activate it.</li>
+              <li>Use Tab to focus a toggle, then Space or Enter to activate it.</li>
             </ol>
           </div>
           <div className="demo-actions">
             <a className="demo-button" href="/" target="_blank" rel="noreferrer">Open another tab <span aria-hidden="true">↗</span></a>
-            <button className="demo-button demo-button-secondary" type="button" onClick={() => toggle.current?.focus()}>Focus main switch</button>
+            <button className="demo-button demo-button-secondary" type="button" onClick={() => toggle.current?.focus()}>Focus main toggle</button>
           </div>
         </section>
       </main>

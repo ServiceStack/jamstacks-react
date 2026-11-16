@@ -5,40 +5,52 @@ async function ready(page, path = '/') {
   await expect(page.getByTestId('state')).toContainText(':true');
 }
 
-test('system preference, explicit overrides, persistence and shared switches', async ({ page }) => {
+const pref = 'data-theme-preference';
+
+test('cycles system, opposite of device, device, then system with persistence and shared toggles', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
   await ready(page);
   const toggle = page.getByTestId('toggle');
-  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await expect(toggle).toHaveAttribute(pref, 'system');
+  await expect(toggle).toHaveAccessibleName('Theme: System');
+  await expect(toggle).not.toHaveAttribute('role');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.emulateMedia({ colorScheme: 'light' });
-  await expect(toggle).toHaveAttribute('aria-checked', 'false');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await toggle.click();
-  await expect(page.getByRole('switch', { name: 'Second dark mode switch', exact: true })).toHaveAttribute('aria-checked', 'true');
+  await expect(toggle).toHaveAccessibleName('Theme: Dark');
+  await expect(page.getByRole('button', { name: 'Second toggle: Dark', exact: true })).toHaveAttribute(pref, 'dark');
   expect(await page.evaluate(() => localStorage.getItem('color-scheme'))).toBe('dark');
   await page.reload();
-  await expect(toggle).toHaveAttribute('aria-checked', 'true');
-  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(toggle).toHaveAttribute(pref, 'dark');
   await toggle.click();
+  await expect(toggle).toHaveAttribute(pref, 'light');
   await expect(page.locator('html')).toHaveClass('light');
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-  await page.getByRole('button', { name: 'Use system' }).click();
+  await toggle.click();
+  await expect(page.getByTestId('state')).toHaveText('system:light:true');
+  await page.emulateMedia({ colorScheme: 'dark' });
   await expect(page.getByTestId('state')).toHaveText('system:dark:true');
+  await toggle.click();
+  await expect(page.getByTestId('state')).toHaveText('light:light:true');
 });
 
 test('keyboard operation, disabled controls and preventDefault', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
   await ready(page);
   const toggle = page.getByTestId('toggle');
   await page.keyboard.press('Tab');
   await expect(toggle).toBeFocused();
   expect(await toggle.evaluate(button => getComputedStyle(button).outlineStyle)).not.toBe('none');
   await page.keyboard.press('Space');
-  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await expect(toggle).toHaveAttribute(pref, 'dark');
   await page.keyboard.press('Enter');
-  await expect(toggle).toHaveAttribute('aria-checked', 'false');
-  await expect(page.getByRole('switch', { name: 'Disabled switch', exact: true })).toBeDisabled();
-  await page.getByRole('switch', { name: 'Cancelled switch', exact: true }).click();
-  await expect(toggle).toHaveAttribute('aria-checked', 'false');
+  await expect(toggle).toHaveAttribute(pref, 'light');
+  await page.keyboard.press('Enter');
+  await expect(toggle).toHaveAttribute(pref, 'system');
+  await expect(page.getByRole('button', { name: 'Disabled toggle: System', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Cancelled toggle: System', exact: true }).click();
+  await expect(toggle).toHaveAttribute(pref, 'system');
 });
 
 test('storage synchronizes across tabs and resets to system when cleared', async ({ context, page }) => {
@@ -85,7 +97,7 @@ test('custom storage keys and defaults, invalid saved values and reduced motion'
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
   await ready(page, '/?custom');
   await expect(page.getByTestId('state')).toHaveText('dark:dark:true');
-  await expect(page.locator('.jamstacks-dark-mode-toggle__thumb').first()).toHaveCSS('transition-duration', '0s');
+  await expect(page.locator('.jamstacks-dark-mode-toggle__icon').first()).toHaveCSS('transition-duration', '0s');
   await page.getByTestId('toggle').click();
   expect(await page.evaluate(() => localStorage.getItem('custom-theme'))).toBe('light');
   expect(await page.evaluate(() => localStorage.getItem('color-scheme'))).toBeNull();
@@ -97,10 +109,10 @@ test('component styling needs no stylesheet and accepts template customizations'
   const toggle = page.getByTestId('toggle');
   await page.evaluate(() => document.documentElement.style.setProperty('--jamstacks-toggle-background', 'rgb(255, 0, 0)'));
   await expect(toggle).toHaveCSS('background-color', 'rgb(255, 0, 0)');
-  const custom = page.getByRole('switch', { name: 'Custom styled switch', exact: true });
+  const custom = page.getByRole('button', { name: /^Custom toggle: / });
   await expect(custom).toHaveCSS('background-color', 'rgb(128, 0, 128)');
   await custom.click();
   await expect(custom).toHaveCSS('background-color', 'rgb(128, 0, 128)');
-  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await expect(toggle).toHaveAttribute(pref, 'dark');
   expect(await page.locator('link[rel="stylesheet"]').count()).toBe(0);
 });

@@ -1,20 +1,41 @@
 {
   "name": "jamstacks",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared React components and theme utilities for Jamstacks templates.",
   "license": "BSD-3-Clause",
   "type": "module",
-  "repository": { "type": "git", "url": "git+https://github.com/ServiceStack/jamstacks-react.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ServiceStack/jamstacks-react.git"
+  },
   "homepage": "https://github.com/ServiceStack/jamstacks-react#readme",
-  "bugs": { "url": "https://github.com/ServiceStack/jamstacks-react/issues" },
-  "keywords": ["jamstacks", "react", "components", "dark-mode", "nextjs"],
-  "files": ["dist"],
+  "bugs": {
+    "url": "https://github.com/ServiceStack/jamstacks-react/issues"
+  },
+  "keywords": [
+    "jamstacks",
+    "react",
+    "components",
+    "dark-mode",
+    "nextjs"
+  ],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js", "default": "./dist/index.js" },
-    "./server": { "types": "./dist/server.d.ts", "import": "./dist/server.js", "default": "./dist/server.js" },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "default": "./dist/server.js"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -31,7 +52,10 @@
     "prepare": "npm run build",
     "prepack": "npm run build"
   },
-  "peerDependencies": { "react": "^18.2.0 || ^19.0.0", "react-dom": "^18.2.0 || ^19.0.0" },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
   "devDependencies": {
     "@playwright/test": "1.65.1",
     "@types/node": "24.19.2",
@@ -42,6 +66,10 @@
     "react-dom": "19.3.1",
     "typescript": "7.0.2"
   },
-  "engines": { "node": ">=22" },
-  "publishConfig": { "access": "public" }
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

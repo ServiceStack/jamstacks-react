@@ -108,7 +108,14 @@ test('component styling needs no stylesheet and accepts template customizations'
   await ready(page);
   const toggle = page.getByTestId('toggle');
   await page.evaluate(() => document.documentElement.style.setProperty('--jamstacks-toggle-background', 'rgb(255, 0, 0)'));
+  await expect(toggle).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(toggle).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await toggle.hover();
   await expect(toggle).toHaveCSS('background-color', 'rgb(255, 0, 0)');
+  await expect(toggle).toHaveCSS('border-top-color', 'rgb(120, 133, 121)');
+  await page.mouse.move(0, 0);
+  await expect(toggle).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(toggle).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
   const custom = page.getByRole('button', { name: /^Custom toggle: / });
   await expect(custom).toHaveCSS('background-color', 'rgb(128, 0, 128)');
   await custom.click();

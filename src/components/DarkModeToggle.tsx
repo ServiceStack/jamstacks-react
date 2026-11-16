@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import type { ButtonHTMLAttributes, CSSProperties } from 'react';
 import { useTheme } from '../theme/ThemeProvider.js';
 import type { ResolvedTheme, Theme } from '../theme/types.js';
@@ -17,7 +17,8 @@ const buttonStyle: CSSProperties = {
   width: '2rem',
   height: '2rem',
   padding: 0,
-  border: '1px solid var(--jamstacks-toggle-border, #788579)',
+  borderWidth: 1,
+  borderStyle: 'solid',
   borderRadius: 999,
   outlineOffset: 3,
 };
@@ -40,12 +41,15 @@ function nextTheme(theme: Theme, device: ResolvedTheme): Theme {
 
 /** A single tri-state light / dark / system button with encapsulated inline styles; no stylesheet import is needed. */
 export const DarkModeToggle = forwardRef<HTMLButtonElement, DarkModeToggleProps>(function DarkModeToggle(
-  { className, style, onClick, disabled, title, 'aria-label': label = 'Theme', ...props }, ref,
+  { className, style, onClick, onPointerEnter, onPointerLeave, disabled, title, 'aria-label': label = 'Theme', ...props }, ref,
 ) {
   const { theme, resolvedTheme, setTheme, mounted } = useTheme();
   const isDark = resolvedTheme === 'dark';
   const isDisabled = disabled || !mounted;
   const name = `${label}: ${names[theme]}`;
+  // Inline styles cannot target :hover, so track it. Touch is ignored to avoid a hover state that sticks after a tap.
+  const [hovered, setHovered] = useState(false);
+  const showChrome = hovered && !isDisabled;
   return (
     <button
       {...props}
@@ -54,7 +58,9 @@ export const DarkModeToggle = forwardRef<HTMLButtonElement, DarkModeToggleProps>
       className={['jamstacks-dark-mode-toggle', className].filter(Boolean).join(' ')}
       style={{
         ...buttonStyle,
-        background: isDark ? 'var(--jamstacks-toggle-dark-background, #334a3c)' : 'var(--jamstacks-toggle-background, #e5e7eb)',
+        background: !showChrome ? 'transparent'
+          : isDark ? 'var(--jamstacks-toggle-dark-background, #334a3c)' : 'var(--jamstacks-toggle-background, #e5e7eb)',
+        borderColor: showChrome ? 'var(--jamstacks-toggle-border, #788579)' : 'transparent',
         color: isDark ? 'var(--jamstacks-toggle-dark-color, #f3f4f6)' : 'var(--jamstacks-toggle-color, #243c2d)',
         cursor: isDisabled ? 'default' : 'pointer',
         opacity: isDisabled ? .55 : 1,
@@ -64,6 +70,8 @@ export const DarkModeToggle = forwardRef<HTMLButtonElement, DarkModeToggleProps>
       title={title ?? name}
       data-theme-preference={theme}
       disabled={isDisabled}
+      onPointerEnter={event => { onPointerEnter?.(event); if (event.pointerType !== 'touch') setHovered(true); }}
+      onPointerLeave={event => { onPointerLeave?.(event); setHovered(false); }}
       onClick={event => {
         onClick?.(event);
         if (!event.defaultPrevented) setTheme(nextTheme(theme, theme === 'system' ? resolvedTheme : deviceTheme()));
